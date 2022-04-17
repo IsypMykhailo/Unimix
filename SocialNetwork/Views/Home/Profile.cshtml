@@ -1,0 +1,426 @@
+﻿@model IEnumerable<SocialNetwork.Data.Post>
+@using Microsoft.AspNetCore.Identity
+@using SocialNetwork.Data
+@using Microsoft.EntityFrameworkCore;
+@inject SignInManager<SocialNetwork.Data.User> SignInManager
+@inject UserManager<SocialNetwork.Data.User> UserManager
+@{
+    var u = UserManager.GetUserAsync(User).Result;
+}
+
+<style>
+    .postAvatar {
+        height:40px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,0,0,0);
+    }
+
+    h6{
+        margin-top:7px;
+        padding-left:3px;
+    }
+
+    .postImg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .postImgWindow {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .post {
+        width: 600px;
+    }
+
+    .divModalImg {
+        width: 600px;
+        overflow: hidden;
+        text-align: center;
+        padding: 0;
+    }
+
+    .divPost {
+        overflow: hidden;
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0);
+        padding: 0;
+        text-align: center;
+    }
+
+    .modal1 {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+
+    .modal-content1 {
+        /*flex-direction:column;
+        flex-wrap:wrap;*/
+        position: relative;
+        background-color: #f8f9fa;
+        margin: auto;
+        padding: 0;
+        border: 1px solid white;
+        width: 25%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: animatetop;
+        animation-duration: 0.4s
+    }
+    
+    
+    @@-webkit-keyframes animatetop {
+        from {top:-300px; opacity:0}
+        to {top:0; opacity:1}
+    }
+    
+    @@keyframes animatetop {
+        from {top:-300px; opacity:0}
+        to {top:0; opacity:1}
+    }
+    
+    
+    .close1 {
+        color: black;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .close1:hover,
+    .close1:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-header1 {
+        padding: 2px 16px;
+        background-color: #f8f9fa;
+        color: black;
+        border-bottom: 2px solid lightgray;
+    }
+
+    .modal-body1 {
+        overflow: hidden;
+        text-align: center;
+        padding: 0;
+    }
+    
+    .modal-footer1 {
+        padding: 2px 16px;
+        background-color: white;
+        color: black;
+    }
+</style>
+
+<div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-lg-9 col-xl-7">
+            <div>
+                <div class="rounded-top text-black d-flex flex-row" style="background-image:url('@u.Background'); height:200px;">
+                    <!--background-color: #000; -->
+                    <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                        <!-- mt-5-->
+                        <img src="@u.ImgUrl" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1"> <!-- mt4-->
+
+                        <a class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1;width:150px;" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                            Edit profile
+                        </a>
+
+                    </div>
+                    <div class="ms-3" style="margin-top:225px">
+                        <!--margin-top: 130px;-->
+                        <h5>@u.FullName</h5>
+                        <p>@u.Location</p>
+                    </div>
+                </div>
+                <div class="p-4 text-black" style="background-color: #f8f9fa;">
+                    <div class="d-flex justify-content-end text-center py-1">
+                        <div>
+                            <p class="mb-1 h5" id="postCount"></p>
+                            <p class="small text-muted mb-0">Posts</p>
+                        </div>
+                        <div class="px-3">
+                            <p class="mb-1 h5" id="followers"></p>
+                            <p class="small text-muted mb-0">Followers</p>
+                        </div>
+                        <div>
+                            <p class="mb-1 h5" id="following"></p>
+                            <p class="small text-muted mb-0">Following</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4 text-black">
+                    <div class="mb-5">
+                        <p class="lead fw-normal mb-1">About</p>
+                        <div class="p-4" style="background-color: #f8f9fa;">
+                            <p class="font-italic mb-1">@u.Description</p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <p class="lead fw-normal mb-0">Posts</p>
+                        <a asp-action="CreatePost" class="btn btn-primary">Add post</a>
+                    </div>
+                    <div class="row g-2 h-100" id="postsRender">
+
+                    </div>
+
+                    <div id="myModal" class="modal1">
+
+
+                        <div class="modal-content1">
+                            <div class="modal-header1">
+                                <span class="close1">&times;</span>
+                                <img class="postAvatar" src="@u.ImgUrl" />
+                                <span>@u.UserName</span>
+                            </div>
+                            <div class="modal-body1" id="modal-body">
+                                <!--<p>Какой-то текст в теле модального окна</p>
+                <p>Ещё другой текст...</p>-->
+                            </div>
+                            <div class="modal-footer1" id="modal-footer">
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <input id="hd1" style="z-index: 101; left: 16px; position: absolute; top: 144px" type="hidden" value="@u.ImgUrl">
+                    <input id="hd2" style="z-index: 101; left: 16px; position: absolute; top: 144px" type="hidden" value="@u.UserName">
+                    <input id="hd3" style="z-index: 101; left: 16px; position: absolute; top: 144px" type="hidden" value="@u.Id">
+                    <input id="hd4" style="z-index: 101; left: 16px; position: absolute; top: 144px" type="hidden" value="@u">
+
+                    <!--<div class="row g-2">
+        <div class="col mb-2">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp" alt="image 1" class="w-100 rounded-3">
+        </div>
+        <div class="col mb-2">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp" alt="image 1" class="w-100 rounded-3">
+        </div>
+        <div class="col mb-2">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp" alt="image 1" class="w-100 rounded-3">
+        </div>
+    </div>
+    <div class="row g-2">
+        <div class="col">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(108).webp" alt="image 1" class="w-100 rounded-3">
+        </div>
+        <div class="col">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp" alt="image 1" class="w-100 rounded-3">
+        </div>
+        <div class="col">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp" alt="image 1" class="w-100 rounded-3">
+        </div>
+    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let apiPosts = "/api/ApiPosts";
+        let apiImages = "/api/GetImages";
+        let apiLikes = "/api/GetLikes";
+        let apiComments = "/api/GetComments";
+        let apiFollows = "/api/ApiFollows";
+        let div = document.getElementById("postsRender");
+
+        function onError(err) {
+            console.log("Err");
+            console.log(err);
+        }
+
+        function renderFollows() {
+            let followingDiv = document.getElementById("following");
+            let followersDiv = document.getElementById("followers");
+            let userId = document.getElementById("hd3").value;
+            let user = document.getElementById("hd4").value;
+            fetch(apiFollows + "/" + userId)
+                .then(res => {
+                    if (res.status !== 200) {
+                        onError(res);
+                        return;
+                    }
+                    return res.json();
+                })
+                .then(follows => {
+                    console.log(follows);
+                    followersDiv.innerText = follows[0].followers.length;
+                    followingDiv.innerText = follows[0].following.length;
+                })
+        }
+
+        renderFollows();
+
+        function renderImages(obj, divPost) {
+            console.log(obj);
+            fetch(apiImages + "/" + obj.id)
+                .then(res => {
+                    if (res.status !== 200) {
+                        onError(res);
+                        return;
+                    }
+                    // console.log(res);
+                    return res.json();
+                })
+                .then(images => {
+                    console.log(images);
+                    
+                    for (let image of images) {
+                        let img = document.createElement("img");
+                        img.src = image.imgUrl;
+                        img.classList.add("postImg");
+                        let userAvatar = document.getElementById("hd1").value;
+                        let userName = document.getElementById("hd2").value;
+                        //let modalTitle = "<img class='postAvatar' src='" + userAvatar + "'> " + userName;
+                        
+                        img.onclick = function () {
+                            modal.style.display = "block";
+                            let modalContent = "<img class='postImgWindow' src='" + img.src + "'>";
+                            let modalBody = document.getElementById("modal-body");
+                            modalBody.innerHTML = modalContent;
+                            renderLikes(obj);
+                            /*let modalFooter = document.getElementById("modal-footer");
+                            modalFooter.innerHTML += obj.description;  */                          
+                            /*let divModal = document.createElement("div");
+                            let divModalImg = document.createElement("div");
+                            divModalImg.classList.add("divModalImg");
+                            divModalImg.innerHTML = "<img class='postImg' src='" + img.src + "'>";
+                            let divTitle = document.createElement("div");
+                            divTitle.innerHTML = " <br><h3>Description</h3>" + obj.description;
+                            divModal.appendChild(divModalImg);
+                            divModal.appendChild(divTitle);
+                            div.appendChild(divModal);*/
+                        }
+                        divPost.appendChild(img);
+                    }
+                })
+        }
+
+        function renderLikes(obj) {
+            console.log(obj);
+            fetch(apiLikes + "/" + obj.id)
+                .then(res => {
+                    if (res.status !== 200) {
+                        onError(res);
+                        return;
+                    }
+                    // console.log(res);
+                    return res.json();
+                })
+                .then(likes => {
+                    console.log(likes);
+                    let modalFooter = document.getElementById("modal-footer");
+                    let likeData = "<span style='font-size:30pt;'>&#x2661;</span><span style='font-size:26pt;'>" + likes.length;
+                    modalFooter.innerHTML = likeData;
+                    renderComments(obj);
+                })
+        }
+
+        function renderComments(obj) {
+            console.log(obj);
+            fetch(apiComments + "/" + obj.id)
+                .then(res => {
+                    if (res.status !== 200) {
+                        onError(res);
+                        return;
+                    }
+                    // console.log(res);
+                    return res.json();
+                })
+                .then(comments => {
+                    console.log(comments);
+                    let modalFooter = document.getElementById("modal-footer");
+                    let commentData = "<span style='font-size:28pt;margin-left:220px;'>&#9993;</span><span style='font-size:26pt;'>" + comments.length + "</span><br>" + obj.description;
+                    modalFooter.innerHTML += commentData;
+                    let inputComment = document.createElement("input");
+                    inputComment.classList.add("form-control");
+                    inputComment.placeholder = "Enter new comment";
+                    let btnComment = document.createElement("button");
+                    btnComment.classList.add("btn");
+                    btnComment.classList.add("btn-primary");
+                    btnComment.innerText = "Send";
+                    let userName = document.getElementById("hd2").value;
+                    let userId = document.getElementById("hd3").value;
+                    let user = document.getElementById("hd4").value;
+                    btnComment.onclick = function () {
+                        let _comment = {
+                            Text: inputComment.value,
+                            PostId: obj.id,
+                            AuthorId: userId
+                        }
+                        fetch(apiComments, {
+                            method: "POST",
+                            body: JSON.stringify(_comment),
+                            headers: { "Content-type": "application/json; charset=UTF-8" }
+                        })
+                        .then(response => response.json())
+                        .then(json => console.log(json))
+                        .catch (err => console.log(err));
+                    }                    
+                    modalFooter.appendChild(inputComment);
+                    modalFooter.appendChild(btnComment);
+                    for (let comment of comments) {
+                        modalFooter.innerHTML += "<p>" + comment.text + "</p>";
+                    }
+                })
+        }
+
+        function getAllPosts() {
+            let userId = document.getElementById("hd3").value;
+            fetch(apiPosts + "/" + userId)
+                .then(res => {
+                    if (res.status !== 200) {
+                        onError(res);
+                        return;
+                    }
+                    return res.json();
+                })
+                .then(posts => {
+                    posts.sort((a, b) => a.createdAt < b.createdAt ? 1 : -1);
+                    let postCount = document.getElementById("postCount");
+                    postCount.innerHTML = posts.length;
+                    for (let post of posts) {
+                        let divPost = document.createElement("div");
+                        //divPost.innerHTML = post.description+"<br>";
+                        divPost.classList.add("col-md-4");
+                        divPost.classList.add("divPost");
+                        renderImages(post, divPost);
+                        div.appendChild(divPost);
+                    }
+                })
+                .catch(err => { onError(err); });
+        }
+
+        getAllPosts();
+
+        var modal = document.getElementById('myModal');
+        var span = document.getElementsByClassName("close1")[0];
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+}

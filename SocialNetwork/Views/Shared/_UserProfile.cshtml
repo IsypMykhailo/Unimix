@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<SocialNetwork.Data.User> SignInManager
+@inject UserManager<SocialNetwork.Data.User> UserManager
+@{ 
+    var u = UserManager.GetUserAsync(User).Result;
+}
+<style>
+    
+    #formLogout{
+        height: 100%;
+    }
+    #btnLogout{
+        height: 100%;
+    }
+    #userAvatar{
+        height: 50px;
+    }
+</style>
+
+<ul class="navbar-nav">
+    <li class="nav-item">
+        <!--<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+            <img id="userAvatar" class="avatar" src="@u.ImgUrl" />
+            <span class="align-middle">@UserManager.GetUserName(User)</span>
+        </a>-->
+        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Profile" title="Profile">
+            <img id="userAvatar" class="avatar" src="@u.ImgUrl" />
+            <span class="align-middle">@u.FullName</span>
+        </a>
+    </li>
+   <li class="nav-item">
+       <form class="form-inline" id="formLogout" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+           <button type="submit" id="btnLogout" class="nav-link btn btn-link text-dark align-middle">Logout</button>
+       </form>
+   </li>
+</ul>

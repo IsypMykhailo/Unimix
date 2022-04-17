@@ -1,0 +1,350 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<SocialNetwork.Data.User> SignInManager
+@inject UserManager<SocialNetwork.Data.User> UserManager
+@{
+    var u = UserManager.GetUserAsync(User).Result;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group my-2">
+                <label asp-for="Input.ImgUrl" class="control-label"></label><br />
+                <img src="@u.ImgUrl" class="avatar my-2" width="200" />
+                <input type="file" name="fileToStorage" class="form-control" id="formFile" />
+                <span asp-validation-for="Input.ImgUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group my-2">
+                <label asp-for="Input.Background" class="control-label"></label><br />
+                <img src="@u.Background" class="my-2" width="200" />
+                <input type="file" name="backToStorage" class="form-control" id="formFile" />
+                <span asp-validation-for="Input.Background" class="text-danger"></span>
+            </div>
+            <div class="form-group my-2">
+                <label asp-for="Username"></label>
+                <input asp-for="Username" class="form-control" disabled />
+            </div>
+            <div class="form-group my-2">
+                <label asp-for="Input.FullName"></label>
+                <input asp-for="Input.FullName" class="form-control" />
+                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group my-2">
+                <label asp-for="Input.PhoneNumber"></label>
+                <input asp-for="Input.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group my-2">
+                <label asp-for="Input.Description"></label>
+                <input asp-for="Input.Description" class="form-control" />
+                <span asp-validation-for="Input.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group my-2">
+                <label asp-for="Input.Status"></label>
+                <select asp-for="Input.Status" class="form-control" id="status">
+                    <option selected="selected">@u.Status</option>
+                </select>
+                <span asp-validation-for="Input.Status" class="text-danger"></span>
+            </div>
+            <div class="form-group my-2">
+                <label asp-for="Input.Location"></label>
+                <select asp-for="Input.Location" class="form-control" id="countries">
+                    <option selected="selected">@u.Location</option>
+                </select>
+                <span asp-validation-for="Input.Location" class="text-danger"></span>
+            </div>
+            <div class="form-group my-2">
+                <label asp-for="Input.TelegramId"></label>
+                <input asp-for="Input.TelegramId" class="form-control" />
+                <span asp-validation-for="Input.TelegramId" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="btn btn-primary my-2">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+<script>
+    const countryList = [
+        "Afghanistan",
+        "Åland Islands",
+        "Albania",
+        "Algeria",
+        "American Samoa",
+        "Andorra",
+        "Angola",
+        "Anguilla",
+        "Antarctica",
+        "Antigua and Barbuda",
+        "Argentina",
+        "Armenia",
+        "Aruba",
+        "Australia",
+        "Austria",
+        "Azerbaijan",
+        "Bahamas (the)",
+        "Bahrain",
+        "Bangladesh",
+        "Barbados",
+        "Belarus",
+        "Belgium",
+        "Belize",
+        "Benin",
+        "Bermuda",
+        "Bhutan",
+        "Bolivia (Plurinational State of)",
+        "Bonaire, Sint Eustatius and Saba",
+        "Bosnia and Herzegovina",
+        "Botswana",
+        "Bouvet Island",
+        "Brazil",
+        "British Indian Ocean Territory (the)",
+        "Brunei Darussalam",
+        "Bulgaria",
+        "Burkina Faso",
+        "Burundi",
+        "Cabo Verde",
+        "Cambodia",
+        "Cameroon",
+        "Canada",
+        "Cayman Islands (the)",
+        "Central African Republic (the)",
+        "Chad",
+        "Chile",
+        "China",
+        "Christmas Island",
+        "Cocos (Keeling) Islands (the)",
+        "Colombia",
+        "Comoros (the)",
+        "Congo (the Democratic Republic of the)",
+        "Congo (the)",
+        "Cook Islands (the)",
+        "Costa Rica",
+        "Croatia",
+        "Cuba",
+        "Curaçao",
+        "Cyprus",
+        "Czechia",
+        "Côte d'Ivoire",
+        "Denmark",
+        "Djibouti",
+        "Dominica",
+        "Dominican Republic (the)",
+        "Ecuador",
+        "Egypt",
+        "El Salvador",
+        "Equatorial Guinea",
+        "Eritrea",
+        "Estonia",
+        "Eswatini",
+        "Ethiopia",
+        "Falkland Islands (the) [Malvinas]",
+        "Faroe Islands (the)",
+        "Fiji",
+        "Finland",
+        "France",
+        "French Guiana",
+        "French Polynesia",
+        "French Southern Territories (the)",
+        "Gabon",
+        "Gambia (the)",
+        "Georgia",
+        "Germany",
+        "Ghana",
+        "Gibraltar",
+        "Greece",
+        "Greenland",
+        "Grenada",
+        "Guadeloupe",
+        "Guam",
+        "Guatemala",
+        "Guernsey",
+        "Guinea",
+        "Guinea-Bissau",
+        "Guyana",
+        "Haiti",
+        "Heard Island and McDonald Islands",
+        "Holy See (the)",
+        "Honduras",
+        "Hong Kong",
+        "Hungary",
+        "Iceland",
+        "India",
+        "Indonesia",
+        "Iran (Islamic Republic of)",
+        "Iraq",
+        "Ireland",
+        "Isle of Man",
+        "Israel",
+        "Italy",
+        "Jamaica",
+        "Japan",
+        "Jersey",
+        "Jordan",
+        "Kazakhstan",
+        "Kenya",
+        "Kiribati",
+        "Korea (the Democratic People's Republic of)",
+        "Korea (the Republic of)",
+        "Kuwait",
+        "Kyrgyzstan",
+        "Lao People's Democratic Republic (the)",
+        "Latvia",
+        "Lebanon",
+        "Lesotho",
+        "Liberia",
+        "Libya",
+        "Liechtenstein",
+        "Lithuania",
+        "Luxembourg",
+        "Macao",
+        "Madagascar",
+        "Malawi",
+        "Malaysia",
+        "Maldives",
+        "Mali",
+        "Malta",
+        "Marshall Islands (the)",
+        "Martinique",
+        "Mauritania",
+        "Mauritius",
+        "Mayotte",
+        "Mexico",
+        "Micronesia (Federated States of)",
+        "Moldova (the Republic of)",
+        "Monaco",
+        "Mongolia",
+        "Montenegro",
+        "Montserrat",
+        "Morocco",
+        "Mozambique",
+        "Myanmar",
+        "Namibia",
+        "Nauru",
+        "Nepal",
+        "Netherlands (the)",
+        "New Caledonia",
+        "New Zealand",
+        "Nicaragua",
+        "Niger (the)",
+        "Nigeria",
+        "Niue",
+        "Norfolk Island",
+        "Northern Mariana Islands (the)",
+        "Norway",
+        "Oman",
+        "Pakistan",
+        "Palau",
+        "Palestine, State of",
+        "Panama",
+        "Papua New Guinea",
+        "Paraguay",
+        "Peru",
+        "Philippines (the)",
+        "Pitcairn",
+        "Poland",
+        "Portugal",
+        "Puerto Rico",
+        "Qatar",
+        "Republic of North Macedonia",
+        "Romania",
+        "Russian Federation (the)",
+        "Rwanda",
+        "Réunion",
+        "Saint Barthélemy",
+        "Saint Helena, Ascension and Tristan da Cunha",
+        "Saint Kitts and Nevis",
+        "Saint Lucia",
+        "Saint Martin (French part)",
+        "Saint Pierre and Miquelon",
+        "Saint Vincent and the Grenadines",
+        "Samoa",
+        "San Marino",
+        "Sao Tome and Principe",
+        "Saudi Arabia",
+        "Senegal",
+        "Serbia",
+        "Seychelles",
+        "Sierra Leone",
+        "Singapore",
+        "Sint Maarten (Dutch part)",
+        "Slovakia",
+        "Slovenia",
+        "Solomon Islands",
+        "Somalia",
+        "South Africa",
+        "South Georgia and the South Sandwich Islands",
+        "South Sudan",
+        "Spain",
+        "Sri Lanka",
+        "Sudan (the)",
+        "Suriname",
+        "Svalbard and Jan Mayen",
+        "Sweden",
+        "Switzerland",
+        "Syrian Arab Republic",
+        "Taiwan (Province of China)",
+        "Tajikistan",
+        "Tanzania, United Republic of",
+        "Thailand",
+        "Timor-Leste",
+        "Togo",
+        "Tokelau",
+        "Tonga",
+        "Trinidad and Tobago",
+        "Tunisia",
+        "Turkey",
+        "Turkmenistan",
+        "Turks and Caicos Islands (the)",
+        "Tuvalu",
+        "Uganda",
+        "Ukraine",
+        "United Arab Emirates (the)",
+        "United Kingdom of Great Britain and Northern Ireland (the)",
+        "United States Minor Outlying Islands (the)",
+        "United States of America (the)",
+        "Uruguay",
+        "Uzbekistan",
+        "Vanuatu",
+        "Venezuela (Bolivarian Republic of)",
+        "Viet Nam",
+        "Virgin Islands (British)",
+        "Virgin Islands (U.S.)",
+        "Wallis and Futuna",
+        "Western Sahara",
+        "Yemen",
+        "Zambia",
+        "Zimbabwe"
+    ];
+    let select = document.getElementById("countries");
+    for (let i = 0; i < countryList.length; i++) {
+        let option = document.createElement("option");
+        option.innerText = countryList[i];
+        select.appendChild(option);
+    }
+
+    const statusList = [
+        "В сети",
+        "Неактивный",
+        "Не беспокоить",
+        "Невидимый"
+    ];
+    let selectStatus = document.getElementById("status");
+    for (let i = 0; i < statusList.length; i++) {
+        let option = document.createElement("option");
+        option.innerText = statusList[i];
+        selectStatus.appendChild(option);
+    }
+</script>
+}
