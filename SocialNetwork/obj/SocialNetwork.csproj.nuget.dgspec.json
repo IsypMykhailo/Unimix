@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP .NET\\SocialNetwork\\SocialNetwork\\SocialNetwork.csproj": {}
+    "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP_NET\\SocialNetwork\\SocialNetwork\\SocialNetwork.csproj": {}
   },
   "projects": {
-    "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP .NET\\SocialNetwork\\SocialNetwork\\SocialNetwork.csproj": {
+    "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP_NET\\SocialNetwork\\SocialNetwork\\SocialNetwork.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP .NET\\SocialNetwork\\SocialNetwork\\SocialNetwork.csproj",
+        "projectUniqueName": "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP_NET\\SocialNetwork\\SocialNetwork\\SocialNetwork.csproj",
         "projectName": "SocialNetwork",
-        "projectPath": "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP .NET\\SocialNetwork\\SocialNetwork\\SocialNetwork.csproj",
+        "projectPath": "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP_NET\\SocialNetwork\\SocialNetwork\\SocialNetwork.csproj",
         "packagesPath": "C:\\Users\\amazo\\.nuget\\packages\\",
-        "outputPath": "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP .NET\\SocialNetwork\\SocialNetwork\\obj\\",
+        "outputPath": "D:\\ПРОГРАММИРОВАНИЕ\\Программирование\\ASP_NET\\SocialNetwork\\SocialNetwork\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -71,6 +71,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[5.0.16, )"
+            },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.11.1, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
